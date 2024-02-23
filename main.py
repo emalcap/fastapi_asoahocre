@@ -15,7 +15,7 @@ load_dotenv()
 
 
 app.include_router(loginRouter) 
-"""
+
 app.include_router(paisRouter) 
 app.include_router(paisUbigeoRouter) 
 app.include_router(zonaUbigeoRouter) 
@@ -30,4 +30,3 @@ app.include_router(empresaRouters)
  
 
 app.include_router(ejemploRouter)
-"""
