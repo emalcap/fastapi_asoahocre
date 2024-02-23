@@ -13,9 +13,9 @@ class TipoCreditoSBS(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime) 
     
 class TipoCredito(Base):
     __tablename__ = 'tipocredito'
@@ -26,9 +26,9 @@ class TipoCredito(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime) 
     
 class parametroCredito(Base):
     __tablename__ = 'parametrocredito'
@@ -39,9 +39,9 @@ class parametroCredito(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime) 
     
 class Credito(Base):
     __tablename__ = 'credito'
@@ -52,9 +52,9 @@ class Credito(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime) 
     
 class CuotasCredito(Base):
     __tablename__ = 'cuotascredito'
@@ -65,6 +65,6 @@ class CuotasCredito(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime) 

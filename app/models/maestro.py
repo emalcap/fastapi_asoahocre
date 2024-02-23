@@ -13,9 +13,9 @@ class Parametro(Base):
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)   
 
 class ParametroDet(Base):
     __tablename__ = 'parametrodet'
@@ -29,9 +29,9 @@ class ParametroDet(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     parametro = relationship('Parametro')
 
@@ -45,9 +45,9 @@ class Continente(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
      
 class Pais(Base):
     __tablename__ = 'pais'
@@ -60,9 +60,9 @@ class Pais(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     continete = relationship('Continente')
   
@@ -79,9 +79,9 @@ class PaisUbigeo(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     pais = relationship('Pais')
     #pais = relationship('Pais', backpopulates="maestro.paisubigeo")
@@ -95,9 +95,9 @@ class ZonaUbigeo(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     paisubigeo =  relationship('PaisUbigeo')
     
@@ -114,9 +114,9 @@ class Empresa(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     pais = relationship('Pais')
     ubigeo = relationship('PaisUbigeo')
@@ -134,9 +134,9 @@ class EmpresaSede(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)   
     #
     empresa = relationship('Empresa')
     pais = relationship('Pais')
@@ -157,11 +157,13 @@ class Persona(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     parametro = relationship('Parametro')
+        
+    
 """
 class Socio(Base):
     __tablename__ = 'socio'

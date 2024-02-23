@@ -12,13 +12,14 @@ class Usuario(Base):
     idpersona = Column(Integer, ForeignKey('maestro.persona.idpersona'))  
     codigo = Column(String(60),unique=True)
     clave= Column(String(30))
-    fcaducidad= Column(Date)     
+    fcaducidad= Column(Date)  
+    email= Column(String(60))
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
     fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)   
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)         
     #
     persona = relationship('Persona')
  
@@ -32,10 +33,10 @@ class Modulo(Base):
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
     fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)  
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)   
    
-class ModuloMenu(Base):
+class ModuloMenu(Base): 
     __tablename__ = 'modulomenu'
     __table_args__ = dict(schema="seguridad")    
     idmodulomenu = Column(Integer, primary_key=True,autoincrement=True)
@@ -45,9 +46,9 @@ class ModuloMenu(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)  
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     #
     modulo = relationship('Modulo')
    
@@ -60,9 +61,9 @@ class Perfil(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime) 
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)   
    
 class UsuarioPerfil(Base):
     __tablename__ = 'usuarioperfil'
@@ -71,9 +72,9 @@ class UsuarioPerfil(Base):
     idperfil = Column(Integer, ForeignKey('seguridad.perfil.idperfil'),primary_key=True)
     registroactivo = Column(Integer,default=1)
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)  
     # 
     usuario = relationship('Usuario')
     perfil  = relationship('Perfil')
@@ -92,9 +93,9 @@ class PerfilMenu(Base):
     exporta = Column(Integer,default=1)    
     registroactivo = Column(Integer,default=1)
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
-    umodifcacion =Column(Integer) 
-    fmodicacion =Column(DateTime)  
+    fcreacion = Column(DateTime) 
+    umodificacion =Column(Integer) 
+    fmodificacion =Column(DateTime)   
     # 
     modulo = relationship('Modulo')
     menu = relationship('ModuloMenu')

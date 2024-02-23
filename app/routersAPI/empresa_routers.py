@@ -1,10 +1,9 @@
 from fastapi import APIRouter,HTTPException,status
-from pydantic import BaseModel # tipo de datos 
 from app.db.database  import Session, engine
 from app.models.maestro  import Empresa
 from app.schemas.empresaSchema import EmpresaSchema
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import text,func
+from datetime import datetime
 
 empresaRouters = APIRouter(
     prefix="/api/empresa",
@@ -46,6 +45,8 @@ async def update_empresaById(id:int,empresa:EmpresaSchema):
         empresaById.razonsocial =empresa.razonsocial
         empresaById.domiciliolegal=empresa.domiciliolegal
         empresaById.registroactivo=empresa.registroactivo
+        #empresaById.usuario =
+        empresaById.fmodicacion=datetime.now()
         #print(empresaById)
         session.commit()
         response={
@@ -64,6 +65,12 @@ async def update_empresaById(id:int,empresa:EmpresaSchema):
 
 @empresaRouters.post('/',status_code=status.HTTP_201_CREATED)
 async def post_empresa(empresa:EmpresaSchema):
+    
+    ruc_exist  =  session.query(Empresa).filter(Empresa.ruc ==empresa.ruc).first()
+    if ruc_exist:
+      raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+             detail="CONFLICT: ruc  already registered"
+         )  
     newEmpresa=Empresa(
         ruc=empresa.ruc,
         idpais =empresa.idpais,
@@ -71,9 +78,9 @@ async def post_empresa(empresa:EmpresaSchema):
         idzona =empresa.idzona,
         razonsocial=empresa.razonsocial,
         domiciliolegal=empresa.domiciliolegal,
-        registroactivo =empresa.registroactivo,
-        eliminado="N",
-        ucreacion =empresa.usuario        
+        registroactivo =empresa.registroactivo,        
+        ucreacion = empresa.usuario, 
+        fcracion = datetime.now()     
     )   
     session.add(newEmpresa)
     session.commit()
