@@ -256,7 +256,7 @@ async def post_usuario(usuario:usuarioSchema):
                 ucreacion = usuario.umantenimiento,
                 fcracion = datetime.now()
             )  
-        print(jsonable_encoder(newusuario))
+        #print(jsonable_encoder(newusuario))
         session.add(newusuario)
         session.commit()  
         

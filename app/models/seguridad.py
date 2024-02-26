@@ -32,7 +32,7 @@ class Modulo(Base):
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
-    fcracion = Column(DateTime) 
+    fcreacion = Column(DateTime) 
     umodificacion =Column(Integer) 
     fmodificacion =Column(DateTime)   
    
