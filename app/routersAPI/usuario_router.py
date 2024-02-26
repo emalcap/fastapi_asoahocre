@@ -19,7 +19,11 @@ async def get_usuarioAll():
     try:  
         lstDataUsuario = []       
         results = session.query(Usuario).options(joinedload(Usuario.persona)).filter(Usuario.eliminado=="N").all()     
-        print(jsonable_encoder(results))          
+        if not results:
+                  raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="NOT_FOUND user"
+        ) 
+                      
         for item in results:
             #print (f"Listing usaurio {item.codigo} // {item.persona.nrodocumento}")            
             dataUsuario = usuarioSchemaLista(
@@ -108,6 +112,11 @@ async def get_usuarioNroDocumento(nrodocumento:str):
 async def get_usuarioById(id:int):
     try:        
         usuario = session.query(Usuario).options(joinedload(Usuario.persona)).filter(Usuario.idusuario==id).first() 
+        if not usuario:         
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found verify user id"
+            )
+            
         if usuario :
             dataUsuario = usuarioSchemaLista(
                 idusuario =usuario.idusuario,
@@ -124,11 +133,7 @@ async def get_usuarioById(id:int):
                 fcaducidad= usuario.fcaducidad,  
                 email=usuario.email,          
                 registroactivo = usuario.registroactivo                
-            )
-        else: 
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-            detail="not found verify user id"
-            )
+            )     
                        
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
