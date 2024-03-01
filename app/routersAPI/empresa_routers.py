@@ -12,7 +12,7 @@ empresaRouters = APIRouter(
 session = Session(bind=engine)
 
 @empresaRouters.get('/')
-async def get_empresaAll():
+async def get_empresaAll(): 
     try:   
         lstEmpresas =session.query(Empresa).filter(Empresa.eliminado == "N").all()
     #print (lstEmpresas)
@@ -45,8 +45,8 @@ async def update_empresaById(id:int,empresa:EmpresaSchema):
         empresaById.razonsocial =empresa.razonsocial
         empresaById.domiciliolegal=empresa.domiciliolegal
         empresaById.registroactivo=empresa.registroactivo
-        #empresaById.usuario =
-        empresaById.fmodicacion=datetime.now()
+        empresaById.umodificacion =empresa.umantenimiento
+        empresaById.fmodificacion=datetime.now()
         #print(empresaById)
         session.commit()
         response={

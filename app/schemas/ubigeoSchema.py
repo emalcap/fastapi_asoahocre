@@ -1,15 +1,19 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class PaisSchema(BaseModel):    
+class paisSchema(BaseModel):    
     idpais : Optional[int]  
     nombre : str
     isoAlfaUno : str
     isoAlfaDos : str    
     registroactivo :int
-    usuario : int
+    umantenimiento : int
+    #ucreacion
+    #fcreacion
+    #umodificacion
+    #fmodificacion
     
-class PaisUbigeoSchema(BaseModel):     
+class paisUbiSchema(BaseModel):     
     idubigeo :Optional[int]    
     idpais : Optional[int]  
     nombre : str
@@ -18,9 +22,9 @@ class PaisUbigeoSchema(BaseModel):
     codigoProvincia : str
     codigo: str
     registroactivo :int
-    usuario : int
+    umantenimiento : int
     
-class zonaUbigeoSchema(BaseModel):     
+class zonaUbiSchema(BaseModel):     
     idubigeo :Optional[int]    
     idpais : Optional[int]  
     nombre : str
@@ -29,7 +33,7 @@ class zonaUbigeoSchema(BaseModel):
     codigoProvincia : str
     codigo: str
     registroactivo :int
-    usuario : int
+    umantenimiento : int
 # usado para rl ejemplo
 class citySchema(BaseModel): 
     id :int

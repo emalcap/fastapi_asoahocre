@@ -4,6 +4,12 @@ from sqlalchemy.orm import declarative_base,sessionmaker
 engine=create_engine('postgresql://postgres.slrnaagetxjwecbbgekk:MWy6?9htv*kWgNm@aws-0-us-west-1.pooler.supabase.com:6543/dbahocre_des',
     echo=True
 )
+""" 
+engine=create_engine('postgresql://postgres:Postgresql15@localhost:5434/dbahocre_des',
+    echo=True
+)
+"""
+
 
 Base=declarative_base()
 

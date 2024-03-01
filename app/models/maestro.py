@@ -8,9 +8,10 @@ class Parametro(Base):
     __tablename__ = 'parametro'
     __table_args__ = dict(schema="maestro")
     idparametro = Column(Integer, primary_key=True,autoincrement=True)   
-    tipo =  Column(String(25),unique=True)
-    codigo = Column(String(25),unique=True)
-    nombre= Column(String(240),unique=True)    
+    tipo =  Column(String(25))
+    codigo = Column(String(25))
+    nombre= Column(String(240))
+    registroactivo = Column(Integer,default=1)   
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
     fcreacion = Column(DateTime) 
@@ -23,6 +24,7 @@ class ParametroDet(Base):
     idparametrodet = Column(Integer, primary_key=True,autoincrement=True)  
     idparametro = Column(Integer, ForeignKey('maestro.parametro.idparametro'))  
     codigo =Column(String(25))
+    nombre =Column(String(80))
     valorint =Column(String(1))
     valor =Column(String(25))
     otrovalor =Column(String(25))
@@ -147,7 +149,7 @@ class Persona(Base):
     __tablename__ = 'persona'
     __table_args__ = dict(schema="maestro")
     idpersona = Column(Integer, primary_key=True,autoincrement=True) 
-    tipodocumento = Column(Integer, ForeignKey('maestro.parametro.idparametro'))
+    tipodocumento = Column(Integer, ForeignKey('maestro.parametrodet.idparametrodet'))
     nrodocumento = Column(String(30))  
     nombre = Column(String(30))
     apepaterno= Column(String(30))
@@ -161,7 +163,8 @@ class Persona(Base):
     umodificacion =Column(Integer) 
     fmodificacion =Column(DateTime)  
     #
-    parametro = relationship('Parametro')
+    parametroDet = relationship('ParametroDet')
+    
         
     
 """

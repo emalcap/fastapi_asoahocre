@@ -14,8 +14,7 @@ session = Session(bind=engine)
 @moduloRouter.get('')
 async def moduloAll():
     try:   
-        lst =session.query(Modulo).filter(Modulo.eliminado == "N").all()
-    #print (lst)
+        lst =session.query(Modulo).filter(Modulo.eliminado == "N").all()         
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="module not found"
@@ -25,64 +24,58 @@ async def moduloAll():
 @moduloRouter.get('/{id}')
 async def moduloById(id:int):
     try:
-        modulo =session.query(Modulo).filter(Modulo.idmodulo==id).first()        
-        if modulo :
-            dataModulo = moduloSchemaLista(
-                idmodulo=dataModulo.idmodulo,
-                codigo =dataModulo.codigo,
-                nombre =dataModulo.nombre,
-                registroactivo =dataModulo.registroactivo                          
-            )
-        else: 
+        datModulo =session.query(Modulo).filter(Modulo.idmodulo==id).first() 
+        if not datModulo: 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
             detail="not found verify module id"
-            )
-        
+        )      
+              
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
             detail="not found"
         )       
-    return jsonable_encoder(modulo)
+    return jsonable_encoder(datModulo)
 
 @moduloRouter.put('/{id}/')
 async def update_moduloById(id:int,modulo:moduloSchema):
     try:     
-        moduloById = session.query(Modulo.idmodulo).filter(Modulo.idmodulo ==id ).first() 
+        moduloById = session.query(Modulo).filter(Modulo.idmodulo ==id ).first() 
+        if not moduloById:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                detail="not found module id"
+            )
         if moduloById:
-            moduloById.idmodulo = modulo.idmodulo       
+            moduloById.idmodulo = id      
             moduloById.codigo = modulo.codigo
             moduloById.nombre = modulo.nombre       
             moduloById.registroactivo = modulo.registroactivo          
-            moduloById.umodifcacion = modulo.umantenimiento      
-            moduloById.fmodicacion = datetime.now()    
+            moduloById.umodificacion = modulo.umantenimiento      
+            moduloById.fmodificacion = datetime.now()   
+            session.commit()  
                    
-            session.commit()            
             response={
                 "status":"OK",
                 "Mesaje":"Update Module"
-                }
-        else:
-             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-             detail="not found with the given ID"
-        )    
-        
+                }      
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-             detail="not found with the given ID"
+             detail="not found"
         )   
-        
     return jsonable_encoder(response)
 
 @moduloRouter.post('')
 async def post_modulo(modulo:moduloSchema):
-    try:     
+    try:    
+        idModuloCount = session.query(Modulo.idmodulo).count()
+        idModuloCount = idModuloCount+1 
+        
         newModulo = Modulo(
-            idmodulo = modulo.idmodulo,        
+            idmodulo = idModuloCount,        
             codigo = modulo.codigo,
             nombre = modulo.nombre,        
             registroactivo = modulo.registroactivo, 
             ucreacion=  modulo.umantenimiento,      
-            fcreacion  = datetime.now()  
+            fcreacion  = datetime.now() 
         )     
         #print (jsonable_encoder(newModulo))           
         session.add(newModulo)
@@ -90,11 +83,34 @@ async def post_modulo(modulo:moduloSchema):
                  
         response={
             "status":"OK",
-            "Mesaje":"Update Module"
+            "Mesaje":"Register Module"
             }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
              detail="not found module"
-        )    
-        
+        )   
     return jsonable_encoder(response)
+
+@moduloRouter.delete('/{id}/',status_code=status.HTTP_204_NO_CONTENT)
+async def delete_module(id:int):  
+    
+    moduloById= session.query(Modulo).filter(Modulo.idmodulo==id,Modulo.eliminado == "N").first()  
+    if not moduloById:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST ,                           
+                        detail="module not found with  ID"
+                    ) 
+    try:  
+        moduloById.idempresa = id       
+        moduloById.eliminado ='S'
+        session.commit()  
+        
+        response={
+            "status":"OK",
+            "Mesaje":"Delete Module"
+            }  
+        
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,                           
+                        detail="NOT_FOUND"
+                    ) 
+    return response

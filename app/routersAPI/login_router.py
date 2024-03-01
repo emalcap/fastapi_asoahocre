@@ -18,16 +18,15 @@ session = Session(bind=engine)
 @loginRouter.post('')
 async def get_login(login: usuarioSchemaLogin):      
     dataUario =session.query(Usuario).filter(Usuario.codigo == login.codigo,Usuario.clave ==login.clave).first()
+    if not dataUario: 
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="not found user"  
+        )
     if dataUario:
         if dataUario.registroactivo == 0:
             raise HTTPException(status_code=status.HTTP_423_LOCKED,
                         detail="user not active"  
-            )
-    else: 
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="not found user"  
-        )
-        
+            )    
     try:  
         """ 
         if dataUario.codigo == "emalcap":

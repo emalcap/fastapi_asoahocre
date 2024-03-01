@@ -11,6 +11,6 @@ class EmpresaSchema(BaseModel): #schema
     razonsocial:str
     domiciliolegal:str
     registroactivo :int 
-    usuario : int
+    umantenimiento : int
     
 

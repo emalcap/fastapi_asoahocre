@@ -29,6 +29,7 @@ class usuarioSchemaLista(BaseModel):
     idusuario : int   
     idpersona : int 
     tipodocumento :Optional[int]
+    documento:str
     nrodocumento : str
     nombre :str
     apepaterno:str
