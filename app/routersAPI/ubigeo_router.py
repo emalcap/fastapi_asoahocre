@@ -103,10 +103,10 @@ async def update_paisById(id:int,pais:paisSchema):
 
 
 #https://community.snowflake.com/s/article/How-to-Join-2-tables-using-SQL-Alchemy
-@paisUbigeoRouter.get('/{idPais}')
-async def get_paisUbigeo(idPais:int):    
+@paisUbigeoRouter.get('/{idpais}')
+async def get_paisUbigeo(idpais:int):    
     try:   
-        lstPaisUbigeo = session.get(PaisUbigeo, idPais).all()
+        lstPaisUbigeo = session.query(PaisUbigeo).join(Pais).filter(Pais.idpais == idpais).all()
         #lstPaisUbigeo = session.query(PaisUbigeo).options(joinedload(PaisUbigeo.pais)).filter(PaisUbigeo.idpais==idPais).filter(PaisUbigeo.eliminado=="N").all() 
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -114,7 +114,7 @@ async def get_paisUbigeo(idPais:int):
         )         
     return  jsonable_encoder(lstPaisUbigeo)
 
-@paisUbigeoRouter.get('/{id}')
+@paisUbigeoRouter.get('/id/{id}')
 async def get_paisUbigeoById(id:int):
     try:
         datPaisUbigeo =session.query(PaisUbigeo).filter(PaisUbigeo.idubigeo ==id).all()   
@@ -134,7 +134,7 @@ async def post_paisUbigeo(paisUbigeo:paisUbiSchema):
         idPaisUbiCount = session.query(PaisUbigeo.idubigeo).count()
         idPaisUbiCount = idPaisUbiCount+1 
         
-        newPais = PaisUbigeo(  
+        newUbigeo = PaisUbigeo(  
             idubigeo =idPaisUbiCount,  
             idpais = paisUbigeo.idpais,  
             nombre = paisUbigeo.nombre, 
@@ -146,7 +146,7 @@ async def post_paisUbigeo(paisUbigeo:paisUbiSchema):
             ucreacion =paisUbigeo.umantenimiento, 
             fcreacion = datetime.now()
         )          
-        session.add(newPais)
+        session.add(newUbigeo)
         session.commit() 
         
         response={
@@ -195,13 +195,79 @@ async def update_paisUbigeoById(id:int,paisUbigeo:paisUbiSchema):
 @zonaUbigeoRouter.get('/{idubigeo}')
 async def get_zonaUbigeo(idubigeo:int):
     try:   
-        lstZonaUbigeo =session.query(ZonaUbigeo).filter(ZonaUbigeo.idubigeo == idubigeo).all()
-    #print (lstEmpresas)
+        lstZonaUbigeo =session.query(ZonaUbigeo).filter(ZonaUbigeo.idubigeo == idubigeo).all()   
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
             detail="not found"
         ) 
-    
-        
     return  jsonable_encoder(lstZonaUbigeo)
+
+@zonaUbigeoRouter.get('/id/{id}')
+async def get_zonaUbigeoById(id:int):
+    try:
+        datZonaUbigeo =session.query(ZonaUbigeo).filter(ZonaUbigeo.idzona ==id).all()   
+        if not datZonaUbigeo:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                detail="not found zona Id"
+            )       
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found"
+        )       
+    return jsonable_encoder(datZonaUbigeo)
+
+@zonaUbigeoRouter.post('')
+async def post_zonaUbigeo(zona:zonaUbiSchema):
+    try:    
+        idzonaCount = session.query(ZonaUbigeo.idzona).count()
+        idzonaCount = idzonaCount+1 
+        
+        newZona = ZonaUbigeo(  
+            idzona = idzonaCount,
+            idubigeo =zona.idubigeo,
+            nombre = zona.nombre,
+            registroactivo =zona.registroactivo,
+            ucreacion =zona.umantenimiento, 
+            fcreacion = datetime.now()
+        )          
+        session.add(newZona)
+        session.commit() 
+        
+        response={
+            "status":"OK",
+            "Mesaje":"Register zona"
+            }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found "
+        )   
+    return jsonable_encoder(response)
+
+@zonaUbigeoRouter.put('/{id}')
+async def update_zonaUbigeoById(id:int,zona:zonaUbiSchema):
+    try:     
+        zonaUbiById = session.query(ZonaUbigeo).filter(ZonaUbigeo.idzona ==id ).first() 
+             
+        if not zonaUbiById:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                detail="not found ubigeo Id"
+            )
+        if zonaUbiById:
+            zonaUbiById.idzona = zona.idzona,
+            zonaUbiById.idubigeo =zona.idubigeo,
+            zonaUbiById.nombre = zona.nombre,
+            zonaUbiById.umodificacion = zona.umantenimiento      
+            zonaUbiById.fmodificacion = datetime.now()  
+            session.commit()            
+            response={
+                "status":"OK",
+                "Mesaje":"Update Zona"
+                }  
+           
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found"
+        )   
+    return jsonable_encoder(response)
+
   

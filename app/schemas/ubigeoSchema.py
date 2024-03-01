@@ -25,13 +25,9 @@ class paisUbiSchema(BaseModel):
     umantenimiento : int
     
 class zonaUbiSchema(BaseModel):     
-    idubigeo :Optional[int]    
-    idpais : Optional[int]  
-    nombre : str
-    codigoDepartamento : str
-    codigoDistrito : str
-    codigoProvincia : str
-    codigo: str
+    idzona : int
+    idubigeo :int
+    nombre :str
     registroactivo :int
     umantenimiento : int
 # usado para rl ejemplo

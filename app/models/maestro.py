@@ -123,7 +123,7 @@ class Empresa(Base):
     pais = relationship('Pais')
     ubigeo = relationship('PaisUbigeo')
     zona = relationship('ZonaUbigeo')
-    
+     
 class EmpresaSede(Base):
     __tablename__ = 'empresasede'
     __table_args__ = dict(schema="maestro")
@@ -133,6 +133,7 @@ class EmpresaSede(Base):
     idubigeo =  Column(Integer, ForeignKey('maestro.paisubigeo.idubigeo')) 
     idzona =  Column(Integer, ForeignKey('maestro.zonaubigeo.idzona')) 
     nombre =  Column(String(200))
+    #direccion = Column(String(80))
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 

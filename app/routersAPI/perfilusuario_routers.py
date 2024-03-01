@@ -23,7 +23,7 @@ async def get_perfil():
     return  jsonable_encoder(lst)
 
 @perfilUsuarioRouter.get('/{id}')
-async def get_perfilaById(id:int):
+async def get_perfilById(id:int):
     try:
         datPerfil =session.query(Perfil).filter(Perfil.idperfil==id).first()   
         if not datPerfil:
@@ -58,12 +58,12 @@ async def post_perfil(perfil:perfilSchema):
             }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-             detail="not found Parameter"
+             detail="not found"
         )   
     return jsonable_encoder(response)
 
 @perfilUsuarioRouter.put('{id}')
-async def update_parameterById(id:int,perfil:perfilSchema):
+async def update_perfilById(id:int,perfil:perfilSchema):
     try:     
         perfilById = session.query(Perfil).filter(Perfil.idperfil ==id ).first() 
         if not perfilById:

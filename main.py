@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 
 from app.routersAPI.ubigeo_router import paisRouter,paisUbigeoRouter,zonaUbigeoRouter
+from app.routersAPI.persona_routers import personaRouter
 from app.routersAPI.empresa_routers import empresaRouters
 from app.routersAPI.parametro_router import parametroRouter,parametroDetRouter
 from app.routersAPI.ejemplo_routers import ejemploRouter
@@ -37,8 +38,12 @@ app.add_middleware(
 )
 
 #CORS
+
 app.include_router(loginRouter) 
 app.include_router(usuarioRouters) 
+  
+app.include_router(personaRouter)
+
 app.include_router(parametroRouter) 
 app.include_router(parametroDetRouter)
 #

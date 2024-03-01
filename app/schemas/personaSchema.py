@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date,datetime
 
-class personaShemaMant(BaseModel):   
+class personaShema(BaseModel):   
     idpersona :Optional[int]=None
     tipodocumento:Optional[int]=None
     nrodocumento :str
@@ -11,6 +11,8 @@ class personaShemaMant(BaseModel):
     apematerno:str
     sexo :str
     fnacimiento:date
-    usumant:str
-    fmant:str
-    mant:Optional[str]=None
+    umantenimiento:int
+    #ucreacion
+    #fcreacion
+    #umantenimiento
+    #fmantenimiento

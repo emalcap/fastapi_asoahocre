@@ -25,7 +25,7 @@ async def get_empresaAll():
 @empresaRouters.get('/{id}')
 async def get_empresaById(id:int):
     try:
-        empresa=session.query(Empresa).filter(Empresa.idempresa==id,Empresa.eliminado == "N").first() 
+        empresa=session.query(Empresa).filter(Empresa.idempresa==id).first() 
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
             detail="not found"
@@ -63,36 +63,43 @@ async def update_empresaById(id:int,empresa:EmpresaSchema):
     return jsonable_encoder(response)
 
 
-@empresaRouters.post('/',status_code=status.HTTP_201_CREATED)
+@empresaRouters.post('',status_code=status.HTTP_201_CREATED)
 async def post_empresa(empresa:EmpresaSchema):
-    
+      
     ruc_exist  =  session.query(Empresa).filter(Empresa.ruc ==empresa.ruc).first()
     if ruc_exist:
-      raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-             detail="CONFLICT: ruc  already registered"
-         )  
-    newEmpresa=Empresa(
-        ruc=empresa.ruc,
-        idpais =empresa.idpais,
-        idubigeo =empresa.idubigeoruc,
-        idzona =empresa.idzona,
-        razonsocial=empresa.razonsocial,
-        domiciliolegal=empresa.domiciliolegal,
-        registroactivo =empresa.registroactivo,        
-        ucreacion = empresa.usuario, 
-        fcracion = datetime.now()     
-    )   
-    session.add(newEmpresa)
-    session.commit()
-
-    response={
-        "ruc":newEmpresa.ruc,
-        "razonsocial":newEmpresa.razonsocial,
-        "domiciliolegal":newEmpresa.domiciliolegal,
-        "registroactivo":newEmpresa.registroactivo
-    }
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                detail="CONFLICT: ruc  already registered"
+            )
+    try:   
+        idEmpresaCount = session.query(Empresa.idempresa).count()
+        idEmpresaCount = idEmpresaCount+1 
+            
+        newEmpresa=Empresa(
+            idempresa = idEmpresaCount,
+            idpais = empresa.idpais,
+            idubigeo  = empresa.idubigeo,
+            idzona = empresa.idzona,
+            ruc = empresa.ruc,
+            razonsocial = empresa.razonsocial,
+            domiciliolegal= empresa.domiciliolegal,
+            registroactivo  = empresa.registroactivo,                 
+            ucreacion = empresa.umantenimiento, 
+            fcracion = datetime.now()     
+        )   
+        session.add(newEmpresa)
+        session.commit()
+        response={
+                "status":"OK",
+                "Mesaje":"Register company"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found"
+        )   
     return jsonable_encoder(response)
 
+"""
 @empresaRouters.delete('/{id}/',status_code=status.HTTP_204_NO_CONTENT)
 async def delete_Empresa(id:int):  
     try:
@@ -106,10 +113,10 @@ async def delete_Empresa(id:int):
                             detail="company not found with the given ID"
                         )   
     return {"OK":id}
-
+""" 
 
 # funcion postgresq Lista  
-
+""" 
 @empresaRouters.get('/funcion/{id}')
 async def get_f_empresaAll(id:int):  
     connection = engine.raw_connection()
@@ -130,7 +137,7 @@ async def get_f_empresaAll(id:int):
 
 @empresaRouters.post('/mantenimiento')
 async def post_empresaMantl(empresa:EmpresaSchema): 
-    """
+   
     newEmpresa ={
         "p_mantenimiento" :'I',
         "idempresa" : empresa.idempresa,
@@ -139,7 +146,7 @@ async def post_empresaMantl(empresa:EmpresaSchema):
         "domiciliolegal":'los tres rios02',
         "registroactivo" :empresa.registroactivo  
     }      
-    """ 
+    
     domiciliolegal= 'los tres rios04',      
     connection = engine.raw_connection()
     try:
@@ -152,6 +159,6 @@ async def post_empresaMantl(empresa:EmpresaSchema):
     finally:
         connection.close()
     return  jsonable_encoder(results)
-
+"""
 
 
