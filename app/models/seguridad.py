@@ -43,6 +43,9 @@ class ModuloMenu(Base):
     idmodulo = Column(Integer, ForeignKey('seguridad.modulo.idmodulo'))
     codigo =Column(String(20))
     nombre =Column(String(60))
+    idmenupadre = Column(Integer, ForeignKey('seguridad.modulomenu.idmodulomenu'))
+    orden= Column(Integer)  
+    secuencia= Column(Integer)
     registroactivo = Column(Integer,default=1)
     eliminado=Column(String(1),default="N")
     ucreacion = Column(Integer) 
@@ -51,7 +54,8 @@ class ModuloMenu(Base):
     fmodificacion =Column(DateTime)  
     #
     modulo = relationship('Modulo')
-   
+    modulomenu =  relationship('ModuloMenu')
+    
 class Perfil(Base):
     __tablename__ = 'perfil'
     __table_args__ = dict(schema="seguridad")    

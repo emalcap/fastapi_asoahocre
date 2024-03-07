@@ -1,7 +1,7 @@
 from fastapi import APIRouter,HTTPException,status,Header
 from app.db.database  import Session, engine
 from app.models.seguridad import Modulo,ModuloMenu
-from app.schemas.moduloSchema import moduloSchema,moduloSchemaLista
+from app.schemas.moduloSchema import moduloSchema,moduloSchemaLista,menuSchema
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 
@@ -114,3 +114,84 @@ async def delete_module(id:int):
                         detail="NOT_FOUND"
                     ) 
     return response
+
+# modulo menu 
+
+@moduloRouter.get('/menu/{idmodulo}')
+async def menuByIdModulo(idmodulo:int):
+    try:
+        datMemu =session.query(ModuloMenu).filter(ModuloMenu.idmodulo==idmodulo).first() 
+        if not datMemu: 
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found menu idmodulo"
+        )               
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found"
+        )       
+    return jsonable_encoder(datMemu)
+
+@moduloRouter.get('/menu/{idmenu}')
+async def menuById(idmenu:int):
+    try:
+        datMemu =session.query(ModuloMenu).filter(ModuloMenu.idmodulomenu==idmenu).first() 
+        if not datMemu: 
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found menu idmenu"
+        )               
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found"
+        )       
+    return jsonable_encoder(datMemu)
+
+@moduloRouter.put('/menu')
+async def update_menuById(menu:menuSchema):
+    try:     
+        menuById = session.query(ModuloMenu).filter(ModuloMenu.idmodulomenu == menu.idmodulomenu).first() 
+        if not moduloById:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                detail="not found menu id"
+            )
+        if moduloById:                
+            moduloById.registroactivo = menuById.registroactivo          
+            moduloById.umodificacion = menuById.umantenimiento      
+            moduloById.fmodificacion = datetime.now()   
+            session.commit()  
+                   
+            response={
+                "status":"OK",
+                "Mesaje":"Update menu"
+                }      
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found"
+        )   
+    return jsonable_encoder(response)
+
+@moduloRouter.post('/menu')
+async def post_menu(menu:menuSchema):
+    try:    
+        idMenuCount = session.query(ModuloMenu.idmodulo).count()
+        idMenuCount = idMenuCount+1 
+        
+        newMenu = ModuloMenu(                
+            registroactivo = menu.registroactivo, 
+            ucreacion=  menu.umantenimiento,      
+            fcreacion  = datetime.now() 
+        )     
+        #print (jsonable_encoder(newMenu))           
+        session.add(newMenu)
+        session.commit()  
+                 
+        response={
+            "status":"OK",
+            "Mesaje":"Register menu"
+            }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found menu"
+        )   
+    return jsonable_encoder(response)
+
+

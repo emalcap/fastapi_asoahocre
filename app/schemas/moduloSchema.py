@@ -13,3 +13,14 @@ class moduloSchemaLista(BaseModel):
    codigo :str
    nombre :str
    registroactivo :str
+ 
+class menuSchema(BaseModel):    
+   idmodulomenu : int
+   idmodulo :int
+   codigo :str
+   nombre :str
+   idmenupadre : Optional[int]
+   orden: Optional[int] 
+   secuencia:Optional[int]
+   registroactivo :int
+   umantenimiento:Optional[int]

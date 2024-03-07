@@ -1,7 +1,7 @@
 from fastapi import APIRouter,HTTPException,status,Header
 from app.db.database  import Session, engine
-from app.models.seguridad  import Perfil
-from app.schemas.perfilSchema import perfilSchema
+from app.models.seguridad  import Perfil,UsuarioPerfil
+from app.schemas.perfilSchema import perfilSchema,usuPerSchema,usuPerSchemaMant
 from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -106,4 +106,88 @@ async def delete_perfil(id:int):
         raise HTTPException(status_code=status.status.HTTP_404_NOT_FOUND ,                           
                             detail="not found"
                         )   
+    return jsonable_encoder(response)
+
+## usuario Perfil 
+@perfilUsuarioRouter.get('/usuario/{iduser}')
+async def get_perfilUsuario(iduser:int):    
+    lstPerUsuario = []    
+    try:
+        connection = engine.raw_connection()
+        cursor_obj = connection.cursor()
+        cursor_obj.callproc("seguridad.perfilusuario_lista", [iduser])
+        #results = list(cursor_obj.fetchall())
+        results = cursor_obj.fetchall()
+        for item in results:
+            #print (f"Listing usaurio {item[0]}// {item[2]}")  
+            datUsuPer = usuPerSchema(                
+                idperfil    =item[0],
+                idusaurio   =item[1],
+                codigo      =item[2],
+                nombre      =item[3],
+                registroactivo=item[4]
+            )
+            lstPerUsuario.append(datUsuPer)           
+        cursor_obj.close()
+        connection.commit()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found Perfil user"
+        )    
+    finally:
+        connection.close()
+    return jsonable_encoder(lstPerUsuario)
+
+@perfilUsuarioRouter.post('/usuario')
+async def post_perfil(usuPer:usuPerSchemaMant):
+    try:             
+        newUsuPer = UsuarioPerfil(  
+            idusuario = usuPer.idusuario, 
+            idperfil =usuPer.idperfil,            
+            registroactivo= usuPer.registroactivo,
+            ucreacion = usuPer.umantenimiento,
+            fcreacion = datetime.now()        
+        ) 
+        #print( jsonable_encoder(newUsuPer))               
+        session.add(newUsuPer)
+        session.commit() 
+        response={
+            "status":"OK",
+            "Mesaje":"Register User Perfil"
+            }
+        
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found"
+        )   
+    return jsonable_encoder(response)
+
+
+@perfilUsuarioRouter.put('Usuario/')
+async def update_perfilById(usuPer: usuPerSchemaMant):
+    try:     
+        usuPerById = session.query(UsuarioPerfil).filter(UsuarioPerfil.idusuario == usuPer.idusuario,UsuarioPerfil.idperfil == usuPer.idperfil).first() 
+        if not usuPerById:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                detail="not found perfil Id"
+            )
+        print(jsonable_encoder(usuPerById))
+         
+        if usuPerById:
+            usuPerById.idusuario = usuPer.idusuario 
+            usuPerById.idperfil= usuPer.idperfil         
+            usuPerById.registroactivo= usuPer.registroactivo               
+            usuPerById.umodificacion = usuPer.umantenimiento      
+            usuPerById.fmodificacion = datetime.now()   
+            session.commit()            
+        
+        response={
+            "status":"OK",
+            "Mesaje":"Update user Perfil"
+            }    
+              
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+             detail="not found"
+        )   
     return jsonable_encoder(response)

@@ -8,7 +8,7 @@ class TipoCreditoSBS(Base):
     __tablename__ = 'tipocreditosbs'
     __table_args__ = dict(schema="producto")
     idparametro = Column(Integer, primary_key=True,autoincrement=True)   
-    tipo =  Column(String(25),unique=True)
+    tipo =  Column(String(80),unique=True)
     codigo = Column(String(25),unique=True)
     nombre= Column(String(240),unique=True)    
     eliminado=Column(String(1),default="N")

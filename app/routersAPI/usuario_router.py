@@ -147,13 +147,12 @@ async def update_usuarioById(id:int,usuario:usuarioSchema):
      
     #usuario  no se debe actualizar datos de persona solo usuario     
     usuarioById = session.query(Usuario).filter(Usuario.idusuario ==id,Usuario.idpersona==usuario.idpersona ).first() 
-    if usuarioById:        
-        documento_exist = session.query(Persona).filter(Persona.idpersona != usuarioById.idpersona ,Persona.nrodocumento == usuario.nrodocumento).first()
-    else:
+    
+    if not usuarioById:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
             detail="not found verify person and user id"
-        )   
-        
+        )        
+    documento_exist = session.query(Persona).filter(Persona.idpersona != usuarioById.idpersona ,Persona.nrodocumento == usuario.nrodocumento).first() 
     if documento_exist:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
             detail="CONFLICT: Document already registered"

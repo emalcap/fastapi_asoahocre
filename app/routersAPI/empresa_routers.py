@@ -1,7 +1,7 @@
 from fastapi import APIRouter,HTTPException,status,Header
 from app.db.database  import Session, engine
 from app.models.maestro  import Empresa
-from app.schemas.empresaSchema import EmpresaSchema
+from app.schemas.empresaSchema import empresaSchema,empresaSchemaLista
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 
@@ -13,58 +13,115 @@ session = Session(bind=engine)
 
 @empresaRouters.get('/')
 async def get_empresaAll(): 
-    try:   
-        lstEmpresas =session.query(Empresa).filter(Empresa.eliminado == "N").all()
-    #print (lstEmpresas)
+    lstEmpresa = []    
+    try:
+        connection = engine.raw_connection()
+        cursor_obj = connection.cursor()
+        cursor_obj.callproc("maestro.empresa_lista", [0])
+        #results = list(cursor_obj.fetchall())
+        results = cursor_obj.fetchall()
+        for item in results:
+            #print (f"Listing usaurio {item[0]}// {item[2]}")  
+            datEmpresa = empresaSchemaLista(
+                idempresa       = item[0],	
+                ruc             = item[1],
+                razonsocial     = item[2],
+                idpais          = item[3],
+                pais            = item[4],		
+                idubigeo        = item[5],
+                ubigeo          = item[6],
+                codigoubigeo    = item[7],
+                idzona          = item[8],
+                zona            = item[9],
+                domiciliolegal  = item[10],	 
+                registroactivo  = item[11]
+            )
+            lstEmpresa.append(datEmpresa)           
+        cursor_obj.close()
+        connection.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="company not found with the given ID"
-        ) 
-    return  jsonable_encoder(lstEmpresas)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail="not found company"
+        )    
+    finally:
+        connection.close()
+    return jsonable_encoder(lstEmpresa)
 
 @empresaRouters.get('/{id}')
 async def get_empresaById(id:int):
+    lstEmpresa = []    
     try:
-        empresa=session.query(Empresa).filter(Empresa.idempresa==id).first() 
+        connection = engine.raw_connection()
+        cursor_obj = connection.cursor()
+        cursor_obj.callproc("maestro.empresa_lista", [id])
+        #results = list(cursor_obj.fetchall())
+        results = cursor_obj.fetchall()
+        for item in results:
+            #print (f"Listing usaurio {item[0]}// {item[2]}")  
+            datEmpresa = empresaSchemaLista(
+                idempresa       = item[0],	
+                ruc             = item[1],
+                razonsocial     = item[2],
+                idpais          = item[3],
+                pais            = item[4],		
+                idubigeo        = item[5],
+                ubigeo          = item[6],
+                codigoubigeo    = item[7],
+                idzona          = item[8],
+                zona            = item[9],
+                domiciliolegal  = item[10],	 
+                registroactivo  = item[11]
+            )
+            lstEmpresa.append(datEmpresa)           
+        cursor_obj.close()
+        connection.commit()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-            detail="not found"
-        )       
-    return jsonable_encoder(empresa)
+            detail="not found company Id"
+        )    
+    finally:
+        connection.close()
+    return jsonable_encoder(lstEmpresa)
 
 @empresaRouters.put('/{id}/')
-async def update_empresaById(id:int,empresa:EmpresaSchema):
-    
-    try:
-        empresaById= session.query(Empresa).filter(Empresa.idempresa==id,Empresa.eliminado == "N").first()  
-        id = empresaById.idempresa
-        ruc = empresaById.ruc
+async def update_empresaById(id:int,empresa:empresaSchema):
+    empresaById= session.query(Empresa).filter(Empresa.idempresa==id).first()
+    if not empresaById:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        detail="not found company id"
+    )
+    ruc_exist = session.query(Empresa).filter(Empresa.idempresa != empresa.idempresa ,Empresa.ruc == empresa.ruc).first() 
+    if ruc_exist:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+            detail="CONFLICT: Ruc already registered"
+        )
         
-        empresaById.idempresa = id
-        empresaById.ruc = ruc
-        empresaById.razonsocial =empresa.razonsocial
-        empresaById.domiciliolegal=empresa.domiciliolegal
-        empresaById.registroactivo=empresa.registroactivo
-        empresaById.umodificacion =empresa.umantenimiento
-        empresaById.fmodificacion=datetime.now()
-        #print(empresaById)
+    try:         
+        #ruc = empresaById.ruc        
+        empresaById.idempresa=id,
+        empresaById.idpais=empresa.idpais,
+        empresaById.idubigeo=empresa.idubigeo,
+        empresaById.idzona=empresa.idzona,
+        empresaById.ruc=empresa.ruc,
+        empresaById.razonsocial=  empresa.razonsocial,
+        empresaById.domiciliolegal=empresa.domiciliolegal,
+        empresaById.registroactivo=empresa.registroactivo,           
+        empresaById.umodificacion= empresa.umantenimiento,
+        empresaById.fmodificacion= datetime.now()        
         session.commit()
         response={
-                "idempresa":empresaById.idempresa,
-                "ruc":empresaById.ruc,
-                "razonsocial":empresaById.razonsocial,
-                "domiciliolegal":empresaById.domiciliolegal,
-                "registroactivo":empresaById.registroactivo,
-                    }
+                "status":"OK",
+                "Mesaje":"Update company"
+        }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-             detail="company not found with the given ID"
+             detail="company not found Id"
         )    
     return jsonable_encoder(response)
 
 
 @empresaRouters.post('',status_code=status.HTTP_201_CREATED)
-async def post_empresa(empresa:EmpresaSchema):
+async def post_empresa(empresa:empresaSchema):
       
     ruc_exist  =  session.query(Empresa).filter(Empresa.ruc ==empresa.ruc).first()
     if ruc_exist:
@@ -73,26 +130,27 @@ async def post_empresa(empresa:EmpresaSchema):
             )
     try:   
         idEmpresaCount = session.query(Empresa.idempresa).count()
-        idEmpresaCount = idEmpresaCount+1 
-            
-        newEmpresa=Empresa(
-            idempresa = idEmpresaCount,
-            idpais = empresa.idpais,
-            idubigeo  = empresa.idubigeo,
-            idzona = empresa.idzona,
-            ruc = empresa.ruc,
-            razonsocial = empresa.razonsocial,
-            domiciliolegal= empresa.domiciliolegal,
-            registroactivo  = empresa.registroactivo,                 
-            ucreacion = empresa.umantenimiento, 
-            fcracion = datetime.now()     
-        )   
+        idEmpresaCount = idEmpresaCount+1           
+        newEmpresa = Empresa(
+            idempresa=idEmpresaCount,
+            idpais=empresa.idpais,
+            idubigeo=empresa.idubigeo,
+            idzona=empresa.idzona,
+            ruc=empresa.ruc,
+            razonsocial=  empresa.razonsocial,
+            domiciliolegal=empresa.domiciliolegal,
+            registroactivo=empresa.registroactivo,            
+            ucreacion= empresa.umantenimiento,
+            fcreacion= datetime.now()
+        )
+        #print(jsonable_encoder(newEmpresa))          
         session.add(newEmpresa)
         session.commit()
         response={
                 "status":"OK",
                 "Mesaje":"Register company"
         }
+        
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
              detail="not found"

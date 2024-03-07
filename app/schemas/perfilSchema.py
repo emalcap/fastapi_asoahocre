@@ -11,4 +11,16 @@ class perfilSchema(BaseModel):
     #fcreacion 
     #umodificacion 
     #fmodificacion
-     
+
+class usuPerSchema(BaseModel):
+    idperfil :  int
+    idusuario :  int
+    codigo : str
+    nombre :str
+    registroactivo:int   
+    
+class usuPerSchemaMant(BaseModel):
+    idusuario :  int
+    idperfil :  int       
+    registroactivo:int 
+    umantenimiento: Optional[int]
