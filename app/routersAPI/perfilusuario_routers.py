@@ -110,7 +110,7 @@ async def delete_perfil(id:int):
 
 ## usuario Perfil 
 @perfilUsuarioRouter.get('/usuario/{iduser}')
-async def get_perfilUsuario(iduser:int):    
+async def get_perfilUser(iduser:int):    
     lstPerUsuario = []    
     try:
         connection = engine.raw_connection()
@@ -139,7 +139,7 @@ async def get_perfilUsuario(iduser:int):
     return jsonable_encoder(lstPerUsuario)
 
 @perfilUsuarioRouter.post('/usuario')
-async def post_perfil(usuPer:usuPerSchemaMant):
+async def post_perfilUser(usuPer:usuPerSchemaMant):
     try:             
         newUsuPer = UsuarioPerfil(  
             idusuario = usuPer.idusuario, 
@@ -163,8 +163,8 @@ async def post_perfil(usuPer:usuPerSchemaMant):
     return jsonable_encoder(response)
 
 
-@perfilUsuarioRouter.put('Usuario/')
-async def update_perfilById(usuPer: usuPerSchemaMant):
+@perfilUsuarioRouter.put('/usuario/')
+async def update_perfilUserById(usuPer: usuPerSchemaMant):
     try:     
         usuPerById = session.query(UsuarioPerfil).filter(UsuarioPerfil.idusuario == usuPer.idusuario,UsuarioPerfil.idperfil == usuPer.idperfil).first() 
         if not usuPerById:
